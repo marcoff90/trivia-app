@@ -17,8 +17,8 @@ public abstract class Game {
 
   @Column(unique = true)
   private String hashcode;
-  @OneToOne
-  private Question currentRoundQuestion;
+//  @OneToOne
+//  private Question currentRoundQuestion;
   @ManyToMany
   private List<Category> currentRoundCategories;
   private int roundNumber;

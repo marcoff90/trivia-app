@@ -205,7 +205,9 @@ public class QuestionController {
  *             * chooses random question from the category
  *             * directly to db sends request to find the question id in answered questions of the player -> if match, recursively calls for another
  *             * shuffles the answers
- *             * sets question as current round question
+ *             * sets question as current question for the player based on player.deviceId
+ *             * each player has their own question -> the possibility of breaking the code when searching for the question which either of players had already
+ *                  answered is too great
  *             * returns game object
  *        TODO
  *             * assigns new List<Category> to the game so it can be loaded after the checkAnswer

@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import lombok.Data;
 
 @Entity(name = "players")
@@ -21,6 +22,8 @@ public class Player {
   @Column(unique = true)
   private String deviceId;
   private String username;
+  @OneToOne
+  private Question currentQuestion;
 //  private int totalScore;
 //  private int currentGameScore;
   @OneToMany

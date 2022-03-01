@@ -7,6 +7,7 @@ import com.trivia.triviaapp.models.game.Game;
 import com.trivia.triviaapp.models.game.MultiplayerGame;
 import com.trivia.triviaapp.models.game.RandomPlayerGame;
 import com.trivia.triviaapp.repositories.MultiplayerGameRepository;
+import com.trivia.triviaapp.repositories.PlayerRepository;
 import com.trivia.triviaapp.repositories.RandomPlayerGameRepository;
 import com.trivia.triviaapp.services.categoryservices.CategoryService;
 import com.trivia.triviaapp.services.playerservices.PlayerService;
@@ -22,16 +23,19 @@ public class GameServiceImpl implements GameService {
   private CategoryService categoryService;
   private RandomPlayerGameRepository randomPlayerGameRepository;
   private QuestionService questionService;
+  private PlayerRepository playerRepository;
 
   @Autowired
   public GameServiceImpl(MultiplayerGameRepository multiplayerGameRepository,
       PlayerService playerService, CategoryService categoryService,
-      RandomPlayerGameRepository randomPlayerGameRepository, QuestionService questionService) {
+      RandomPlayerGameRepository randomPlayerGameRepository, QuestionService questionService,
+      PlayerRepository playerRepository) {
     this.multiplayerGameRepository = multiplayerGameRepository;
     this.playerService = playerService;
     this.categoryService = categoryService;
     this.randomPlayerGameRepository = randomPlayerGameRepository;
     this.questionService = questionService;
+    this.playerRepository = playerRepository;
   }
 
   @Override
@@ -149,14 +153,13 @@ public class GameServiceImpl implements GameService {
     RandomPlayerGame randomGame = randomPlayerGameRepository.findByShortCodeNotFinishedStarted(shortCode);
     MultiplayerGame multiGame = multiplayerGameRepository.findByShortCodeNotFinishedStarted(shortCode);
     Question q = questionService.getRandomQuestionsFromCategory(categoryId, random, deviceId).get(0);
+    Player p = playerService.findByDeviceId(deviceId);
+    p.setCurrentQuestion(q);
+    playerRepository.save(p);
 
     if (randomGame == null) {
-      multiGame.setCurrentRoundQuestion(q);
-      multiplayerGameRepository.save(multiGame);
       return multiGame;
     } else {
-      randomGame.setCurrentRoundQuestion(q);
-      randomPlayerGameRepository.save(randomGame);
       return randomGame;
     }
   }

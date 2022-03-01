@@ -1,6 +1,7 @@
 package com.trivia.triviaapp.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.trivia.triviaapp.models.game.Game;
 import java.util.List;
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import lombok.Data;
 
 @Entity(name = "players")
 @Data
+@JsonPropertyOrder({"id", "deviceId", "username", "active", "totalScore", "currentGameScore", "currentQuestion"})
 public class Player {
 
   @Id
@@ -24,8 +26,8 @@ public class Player {
   private String username;
   @OneToOne
   private Question currentQuestion;
-//  private int totalScore;
-//  private int currentGameScore;
+  private int totalScore;
+  private int currentGameScore;
   @OneToMany
   @JsonIgnore
   private List<Question> answeredQuestions;

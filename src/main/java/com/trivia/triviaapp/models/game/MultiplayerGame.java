@@ -13,7 +13,7 @@ import lombok.Data;
 
 @Entity(name = "multiplayer_games")
 @Data
-@JsonPropertyOrder({"id"})
+@JsonPropertyOrder({"id", "shortCode", "hasStarted", "finished", "roundNumber", "hashCode", "currentRoundCategories", "hostPlayer", "joiningPlayers"})
 public class MultiplayerGame extends Game {
 
   @Id

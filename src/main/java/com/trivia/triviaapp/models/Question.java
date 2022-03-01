@@ -1,6 +1,7 @@
 package com.trivia.triviaapp.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import lombok.Data;
 
 @Entity(name = "questions")
 @Data
+@JsonPropertyOrder({"id", "type", "difficulty", "correctAnswerId", "correctAnswer", "question", "answers", "category"})
 public class Question {
 
   @Id

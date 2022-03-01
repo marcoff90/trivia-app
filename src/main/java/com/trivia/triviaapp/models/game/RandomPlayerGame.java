@@ -11,7 +11,7 @@ import lombok.Data;
 
 @Entity(name = "random_player_games")
 @Data
-@JsonPropertyOrder({"id"})
+@JsonPropertyOrder({"id", "shortCode", "hasStarted", "finished", "roundNumber", "hashcode", "currentRoundCategories", "hostPlayer", "joiningPlayer"})
 public class RandomPlayerGame extends Game {
 
   @Id

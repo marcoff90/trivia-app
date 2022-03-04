@@ -1,46 +1,27 @@
-package com.trivia.triviaapp.controllers;
+package com.trivia.triviaapp.docs;
 
 import com.trivia.triviaapp.factories.ErrorFactory;
 import com.trivia.triviaapp.services.categoryservices.CategoryService;
 import com.trivia.triviaapp.services.questionservices.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/trivia/api")
-public class QuestionController {
+public class DocsComments {
 
   private QuestionService questionService;
   private ErrorFactory errorFactory;
   private CategoryService categoryService;
 
   @Autowired
-  public QuestionController(QuestionService questionService, ErrorFactory errorFactory,
+  public DocsComments(QuestionService questionService, ErrorFactory errorFactory,
       CategoryService categoryService) {
     this.questionService = questionService;
     this.errorFactory = errorFactory;
     this.categoryService = categoryService;
   }
 
-//  @GetMapping("/categories/{id}/questions")
-//  public ResponseEntity<Object> showCategoryQuestions(@PathVariable(required = false) Integer id,
-//      @RequestParam(required = false) Integer random) {
-//    if (random == null) {
-//      return ResponseEntity.badRequest().body(errorFactory.getNewErrorMessage("Number of questions is needed!"));
-//    } else if (categoryService.isCategoryInDatabase(id)) {
-//      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorFactory.getNewErrorMessage("Category doesn't exist!"));
-//    } else {
-//      return ResponseEntity.ok().body(questionService.getRandomQuestionsFromCategory(id, random));
-//    }
-//  }
-
-  @GetMapping("/categories/{categoryId}/questions/{questionId}")
   public ResponseEntity<Object> checkAnswer(@PathVariable(required = false) Integer categoryId, @PathVariable(required = false) Integer questionId,
       @RequestParam(required = false) Integer tip) {
     if (tip == null) {
@@ -52,9 +33,13 @@ public class QuestionController {
 }
 
 /**
- *  TODO
+ * TODO
  *    -> make methods which check the statuses of the users in waiting game, when inactive, sets the game to finished
  *          -> methods called regularly in endpoints or based on timer runs all the time in interval
+ *
+ * ? IDEAS
+ *
+ *
  *
  *
  *  DEVELOPMENT UNDER DEV_DATABASE -> REAL_DB WHEN FINISHED
@@ -165,6 +150,17 @@ public class QuestionController {
  *                   * adds player to the list of joining players
  *                   * saves and returns the game
  *
+ * DONE    | PUT | startMultiPlayerGame()
+ *             ! ENDPOINT games/{gameCode}
+ *             ? no gameCode -> Bad request
+ *             ? no hashcode -> Bad request
+ *             ? game null -> not found
+ *             ? player null -> not found
+ *             * finds the game based on game code which is not started, not finished
+ *             * changes to started
+ *             * saves
+ *             * returns the game object
+ *
  *    ! EDIT ALREADY DONE ENDPOINTS TO THIS LOGIC
  * DONE    | GET | showCategories()
  *             ? no gameCode -> Bad request
@@ -179,21 +175,13 @@ public class QuestionController {
  *             * when looking for game searches for one with the gameCode which is unfinished and started
  *             * each player chooses their own category based on spin of the wheel
  *             * categories are saved for each round under the current game id in db
- *             * returns either randomGame categories or multiGame categories based on which type is found in db based on gameCode
+ *             * returns either randomGame object or multiGame object
+ *             ? maybe returns either randomGame categories or multiGame categories based on which type is found in db based on gameCode
  *             * FE fortune wheel with 6 categories
  *
- *     | PUT | startMultiPlayerGame()
- *             ! ENDPOINT games/{gameCode}
- *             ? no gameCode -> Bad request
- *             ? no hashcode -> Bad request
- *             ? game null -> not found
- *             ? player null -> not found
- *             * finds the game based on game code which is not started, not finished
- *             * changes to started
- *             * saves
- *             * returns the game object
+
  *
- *     | GET | getQuestion()
+ * DONE    | GET | getQuestion()
  *             ! ENDPOINT games/{gameId}//categories/{id}/questions
  *             ? no gameCode -> Bad request
  *             ? no hashcode -> Bad request
@@ -208,27 +196,35 @@ public class QuestionController {
  *             * sets question as current question for the player based on player.deviceId
  *             * each player has their own question -> the possibility of breaking the code when searching for the question which either of players had already
  *                  answered is too great
- *             * returns game object
+ *             * returns gameDTO object
+ *                  -> same fields as Game object tho only one player, the player is assigned to the DTO object based on deviceId passed in header
+ *  *                     this way the FE will be able to easily render the question for the player on the specific device without conditioning for deviceId = deviceId
  *        TODO
  *             * assigns new List<Category> to the game so it can be loaded after the checkAnswer
  *             * if roundNumber / 5 == 0
  *                    * increments lightingRoundQuestions
+ *
+ *
+ *
  *
  *     | GET | checkAnswer()
  *             ! ENDPOINT games/{gameId}//categories/{categoryId}/questions/{questionId}
  *             * returns AnswerChecker
  *             * increments points if correct
  *             * increments player level according to the algorithm to be made
- *             * assigns new question for next round to the game object
+ *             * nulls question for each player -> when then showing categories, no player has question assigned
  *             * FE async await -> waits couple seconds to show the result of the question -> calls GET results
  *             * if roundNumber / 5 == 0 & lightingRoundQuestions < 5
  *                    * calls getQuestion
  *     | GET | showResults()
  *             ! ENDPOINT games/{gameId}/players
+ *             * based on async await on FE part waits till both all players have the same number of answered questions
+ *                  -> TODO add int answeredQuestionInGame to the player object which is incremented in checkAnswer
+ *             * when the condition is true sends request to showResult which increments the round number
+ *             * till the condition is true the view shows "waiting for all players to answer"
  *             * if roundNumber / 5 == 0 & lightningRoundQuestions == 5
  *                  * sets lightningRoundQuestions to 0
  *             * returns List<Player> of the game object including host
- *             * increments roundNumber
  *             * FE renders results, button continue game -> GET categories
  *
  *     | POST | logOut()

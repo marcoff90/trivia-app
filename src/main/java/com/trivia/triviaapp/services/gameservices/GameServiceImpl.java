@@ -1,9 +1,11 @@
 package com.trivia.triviaapp.services.gameservices;
 
+import com.trivia.triviaapp.factories.GameDTOFactory;
 import com.trivia.triviaapp.models.Category;
 import com.trivia.triviaapp.models.Player;
 import com.trivia.triviaapp.models.Question;
 import com.trivia.triviaapp.models.game.Game;
+import com.trivia.triviaapp.models.game.GameDTO;
 import com.trivia.triviaapp.models.game.MultiplayerGame;
 import com.trivia.triviaapp.models.game.RandomPlayerGame;
 import com.trivia.triviaapp.repositories.MultiplayerGameRepository;
@@ -24,18 +26,20 @@ public class GameServiceImpl implements GameService {
   private RandomPlayerGameRepository randomPlayerGameRepository;
   private QuestionService questionService;
   private PlayerRepository playerRepository;
+  private GameDTOFactory gameDTOFactory;
 
   @Autowired
   public GameServiceImpl(MultiplayerGameRepository multiplayerGameRepository,
       PlayerService playerService, CategoryService categoryService,
       RandomPlayerGameRepository randomPlayerGameRepository, QuestionService questionService,
-      PlayerRepository playerRepository) {
+      PlayerRepository playerRepository, GameDTOFactory gameDTOFactory) {
     this.multiplayerGameRepository = multiplayerGameRepository;
     this.playerService = playerService;
     this.categoryService = categoryService;
     this.randomPlayerGameRepository = randomPlayerGameRepository;
     this.questionService = questionService;
     this.playerRepository = playerRepository;
+    this.gameDTOFactory = gameDTOFactory;
   }
 
   @Override
@@ -149,7 +153,7 @@ public class GameServiceImpl implements GameService {
   }
 
   @Override
-  public Game getQuestionForTheRound(String shortCode, Integer categoryId, String deviceId, Integer random) {
+  public GameDTO getQuestionForTheRound(String shortCode, Integer categoryId, String deviceId, Integer random) {
     RandomPlayerGame randomGame = randomPlayerGameRepository.findByShortCodeNotFinishedStarted(shortCode);
     MultiplayerGame multiGame = multiplayerGameRepository.findByShortCodeNotFinishedStarted(shortCode);
     Question q = questionService.getRandomQuestionsFromCategory(categoryId, random, deviceId).get(0);
@@ -158,9 +162,9 @@ public class GameServiceImpl implements GameService {
     playerRepository.save(p);
 
     if (randomGame == null) {
-      return multiGame;
+      return gameDTOFactory.getNewGameDTOMultiplayer(multiGame, p);
     } else {
-      return randomGame;
+      return gameDTOFactory.getNewGameDTORandomPlayer(randomGame, p);
     }
   }
 

@@ -147,6 +147,7 @@ public class GameController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorFactory.getNewErrorMessage("Player not found"));
 
     } else {
+      int a = 2+2;
       return ResponseEntity.ok().body(gameService.startMultiPlayerGame(gameCode));
     }
   }

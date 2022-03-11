@@ -1,3 +1,10 @@
+SETUP
+1. create schema test_trivia_api
+2. import three example tables (category, questions, possible_answer)
+3. create application.properties file in ./src/main/resources
+4. set up your mysql connection to the database
+5. try how it works 
+
 TRIVIA GAME API
 
 - application is build to be connected to React Native app

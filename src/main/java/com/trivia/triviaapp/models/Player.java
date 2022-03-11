@@ -2,7 +2,6 @@ package com.trivia.triviaapp.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.trivia.triviaapp.models.game.Game;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;

@@ -20,10 +20,6 @@ public class PossibleAnswer {
   @JsonIgnore
   private Question question;
 
-  public PossibleAnswer(String answer) {
-    this.answer = answer;
-  }
-
   public PossibleAnswer() {
   }
 }

@@ -9,5 +9,4 @@ public class ErrorFactory {
   public ErrorMessage getNewErrorMessage(String errorMessage) {
     return new ErrorMessage(errorMessage);
   }
-
 }

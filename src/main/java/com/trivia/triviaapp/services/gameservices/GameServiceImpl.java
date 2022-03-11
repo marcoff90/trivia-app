@@ -14,6 +14,7 @@ import com.trivia.triviaapp.repositories.RandomPlayerGameRepository;
 import com.trivia.triviaapp.services.categoryservices.CategoryService;
 import com.trivia.triviaapp.services.playerservices.PlayerService;
 import com.trivia.triviaapp.services.questionservices.QuestionService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -199,4 +200,86 @@ public class GameServiceImpl implements GameService {
     return game;
   }
 
+  @Override
+  public GameDTO checkAnswer(String shortCode, String deviceId, Integer categoryId, Integer questionId, Integer answerId) {
+    RandomPlayerGame randomGame = randomPlayerGameRepository.findByShortCodeNotFinishedStarted(shortCode);
+    MultiplayerGame multiGame = multiplayerGameRepository.findByShortCodeNotFinishedStarted(shortCode);
+    Player player = playerService.findByDeviceId(deviceId);
+    Question q = player.getCurrentQuestion();
+
+    if (q.getCorrectAnswerId() == answerId) {
+      player.setCurrentGameScore(player.getCurrentGameScore() + 1);
+      player.setTotalScore(player.getTotalScore() + 1);
+      player.setCurrentQuestion(null);
+      player.setDidAnswerQuestionCorrectly(true);
+    } else {
+      player.setCurrentQuestion(null);
+      player.setDidAnswerQuestionCorrectly(false);
+    }
+    player.setNumberOfAnsweredQuestionInOneGame(player.getNumberOfAnsweredQuestionInOneGame() + 1);
+    playerRepository.save(player);
+
+    if (randomGame == null) {
+      if (didAllPlayersAnsweredInMultiGame(shortCode)) {
+        multiGame.setRoundNumber(multiGame.getRoundNumber() + 1);
+        multiplayerGameRepository.save(multiGame);
+      }
+      return gameDTOFactory.getNewGameDTOMultiplayer(multiGame, player);
+    } else {
+      if (randomGame.getHostPlayer().getNumberOfAnsweredQuestionInOneGame() == randomGame.getJoiningPlayer()
+          .getNumberOfAnsweredQuestionInOneGame()) {
+        randomGame.setRoundNumber(randomGame.getRoundNumber() + 1);
+        randomPlayerGameRepository.save(randomGame);
+      }
+      return gameDTOFactory.getNewGameDTORandomPlayer(randomGame, player);
+    }
+  }
+
+  @Override
+  public Game showRoundResults(String shortCode, String deviceId) {
+    RandomPlayerGame randomGame = randomPlayerGameRepository.findByShortCodeNotFinishedStarted(shortCode);
+    MultiplayerGame multiGame = multiplayerGameRepository.findByShortCodeNotFinishedStarted(shortCode);
+
+    if (randomGame == null) {
+      multiGame.getJoiningPlayers().forEach(p -> p.setDidAnswerQuestionCorrectly(null));
+      playerRepository.saveAll(multiGame.getJoiningPlayers());
+      multiGame.getHostPlayer().setDidAnswerQuestionCorrectly(null);
+      playerRepository.save(multiGame.getHostPlayer());
+      // * sets state of answer to null to all players
+
+      if (multiGame.getRoundNumber() == 10) {
+        multiGame.setFinished(true);
+        multiplayerGameRepository.save(multiGame);
+        // * sets status of the game to finished when 10th round
+      }
+      return multiGame;
+
+    } else {
+      randomGame.getJoiningPlayer().setDidAnswerQuestionCorrectly(null);
+      playerRepository.save(randomGame.getJoiningPlayer());
+      randomGame.getHostPlayer().setDidAnswerQuestionCorrectly(null);
+      playerRepository.save(randomGame.getHostPlayer());
+
+      if (randomGame.getRoundNumber() == 10) {
+        randomGame.setFinished(true);
+        randomPlayerGameRepository.save(randomGame);
+      }
+      return randomGame;
+    }
+  }
+
+  @Override
+  public boolean didAllPlayersAnsweredInMultiGame(String shortCode) {
+    MultiplayerGame game = multiplayerGameRepository.findByShortCodeNotFinishedStarted(shortCode);
+    List<Player> allPlayers = game.getJoiningPlayers();
+    allPlayers.add(game.getHostPlayer());
+    return allPlayers.stream().map(Player::getNumberOfAnsweredQuestionInOneGame).distinct().count() <= 1;
+  }
+
+  @Override
+  public boolean didAllPlayersAnsweredInRandomGame(String shortCode) {
+    RandomPlayerGame randomGame = randomPlayerGameRepository.findByShortCodeNotFinishedStarted(shortCode);
+    return randomGame.getHostPlayer().getNumberOfAnsweredQuestionInOneGame() == randomGame.getJoiningPlayer()
+        .getNumberOfAnsweredQuestionInOneGame();
+  }
 }

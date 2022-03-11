@@ -7,7 +7,8 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-@JsonPropertyOrder({"id", "shortCode", "hasStarted", "finished", "roundNumber", "hashcode", "currentRoundCategories", "requestSendingPlayer"})
+@JsonPropertyOrder({"id", "shortCode", "hasStarted", "finished", "roundNumber", "hashcode", "currentRoundCategories",
+    "requestSendingPlayer"})
 public class GameDTO {
 
   private int id;
@@ -40,6 +41,4 @@ public class GameDTO {
     this.currentRoundCategories = game.getCurrentRoundCategories();
     this.requestSendingPlayer = player;
   }
-
-
 }

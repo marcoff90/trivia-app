@@ -1,6 +1,5 @@
 package com.trivia.triviaapp.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.util.List;
 import javax.persistence.CascadeType;

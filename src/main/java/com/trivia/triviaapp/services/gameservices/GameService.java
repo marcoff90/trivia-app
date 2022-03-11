@@ -1,12 +1,10 @@
 package com.trivia.triviaapp.services.gameservices;
 
-import com.trivia.triviaapp.models.Category;
 import com.trivia.triviaapp.models.Player;
 import com.trivia.triviaapp.models.game.Game;
 import com.trivia.triviaapp.models.game.GameDTO;
 import com.trivia.triviaapp.models.game.MultiplayerGame;
 import com.trivia.triviaapp.models.game.RandomPlayerGame;
-import java.util.List;
 
 public interface GameService {
 
@@ -33,5 +31,14 @@ public interface GameService {
   boolean isCategoryInTheGame(String shortCode, Integer categoryId);
 
   MultiplayerGame startMultiPlayerGame(String shortCode);
+
+  GameDTO checkAnswer(String shortCode, String deviceId, Integer categoryId, Integer questionId, Integer answerId);
+
+  Game showRoundResults(String shortCode, String deviceId);
+
+  boolean didAllPlayersAnsweredInMultiGame(String shortCode);
+
+  boolean didAllPlayersAnsweredInRandomGame(String shortCode);
+
 
 }

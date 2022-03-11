@@ -32,9 +32,4 @@ public class CategoryServiceImpl implements CategoryService {
     Collections.shuffle(categories, random);
     return categories.subList(0, 6);
   }
-
-  @Override
-  public boolean isCategoryInDatabase(Integer id) {
-    return !categoryRepository.findById(id).isPresent();
-  }
 }

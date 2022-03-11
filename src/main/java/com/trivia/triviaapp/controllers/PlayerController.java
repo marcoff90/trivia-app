@@ -30,11 +30,13 @@ public class PlayerController {
   }
 
   public ResponseEntity<Object> storePlayer(String username, String deviceId) {
+    System.out.println(deviceId);
     if (deviceId == null) {
       return ResponseEntity.badRequest().body(errorFactory.getNewErrorMessage("Device id missing!"));
     } else if (username == null) {
       return ResponseEntity.badRequest().body(errorFactory.getNewErrorMessage("Username must be entered!"));
-    } else if (playerService.findByDeviceId(deviceId) != null && playerService.findByUsername(username) == playerService.findByDeviceId(deviceId)) {
+    } else if (playerService.findByDeviceId(deviceId) != null && playerService.findByUsername(username) == playerService.findByDeviceId(
+        deviceId)) {
       return showWelcomePlayer(deviceId);
     } else if (playerService.findByDeviceId(deviceId) != null) {
       return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorFactory.getNewErrorMessage("Device already registered"));

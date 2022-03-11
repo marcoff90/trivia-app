@@ -2,6 +2,7 @@ package com.trivia.triviaapp.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/trivia/api")
+@CrossOrigin(origins = "http://localhost:19002")
 public class SuperController {
 
   private PlayerController playerController;
@@ -71,4 +73,17 @@ public class SuperController {
     return gameController.startMultiPlayerGame(gameCode, deviceId);
   }
 
+  @GetMapping("/games/{gameCode}/categories/{categoryId}/questions/{questionId}")
+  public ResponseEntity<Object> checkAnswer(@PathVariable(required = false) String gameCode,
+      @PathVariable(required = false) Integer categoryId,
+      @PathVariable(required = false) Integer questionId, @RequestHeader(required = false) String deviceId,
+      @RequestParam(required = false) Integer answerId) {
+    return gameController.checkAnswer(gameCode, deviceId, categoryId, questionId, answerId);
+  }
+
+  @GetMapping("/games/{gameCode}/players")
+  public ResponseEntity<Object> showResults(@PathVariable(required = false) String gameCode,
+      @RequestHeader(required = false) String deviceId) {
+    return gameController.showResults(gameCode, deviceId);
+  }
 }

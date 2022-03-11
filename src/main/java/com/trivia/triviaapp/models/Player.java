@@ -15,7 +15,8 @@ import lombok.Data;
 
 @Entity(name = "players")
 @Data
-@JsonPropertyOrder({"id", "deviceId", "username", "active", "totalScore", "currentGameScore", "currentQuestion"})
+@JsonPropertyOrder({"id", "deviceId", "username", "active", "totalScore", "numberOfAnsweredQuestionInOneGame", "didAnswerQuestionCorrectly",
+    "currentGameScore", "currentQuestion"})
 public class Player {
 
   @Id
@@ -28,6 +29,8 @@ public class Player {
   private Question currentQuestion;
   private int totalScore;
   private int currentGameScore;
+  private int numberOfAnsweredQuestionInOneGame;
+  private Boolean didAnswerQuestionCorrectly;
   @OneToMany
   @JsonIgnore
   private List<Question> answeredQuestions;
@@ -42,21 +45,5 @@ public class Player {
   public Player() {
     this.isActive = false;
   }
-
-  /**
-   *  private int id;
-   *  private String deviceId - generated from react native
-   *  private String username
-   *  private int totalScore
-   *  private int currentGameScore
-   *  private List<Question> answeredQuestions
-   *  private boolean isActive = when app starts to true, when closed to false
-   *
-   *  ? private Game currentGame
-   *  ? private List<Game> historyOfGames
-   *  ? private boolean isChoosingCategory
-   */
-
-
 
 }

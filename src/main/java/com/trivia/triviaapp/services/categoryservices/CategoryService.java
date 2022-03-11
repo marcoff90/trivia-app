@@ -7,6 +7,4 @@ public interface CategoryService {
 
   List<Category> getSixRandomCategories();
 
-  boolean isCategoryInDatabase(Integer id);
-
 }

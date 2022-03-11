@@ -33,7 +33,9 @@ out/
 /nbdist/
 /.nb-gradle/
 
+
 ### VS Code ###
 .vscode/
 
-DevFile.java
+src/main/java/com/trivia/triviaapp/docs
+src/main/resources/application.properties
